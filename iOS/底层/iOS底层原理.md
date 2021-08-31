@@ -363,3 +363,54 @@ pthread_mutex_destroy(&mutex);
 + 数据段: 常量、全局变量、静态变量等
 + 栈: 程序控制调用区域
 + 堆: 程序员控制管理的对象存放区域
+
+### 自动释放池
+
+> AutoreleasePool 栈模式
+> 本质是一个结构体，有构造函数(push)和析构函数(pop)，其中以AutoreleasePoolPage来进行对象管理
+> page大小为4096字节，除开内部变量外(56字节)，剩下的存在pool中的对象地址
+> page采用双向链表方式来存储(page *present、page *child)，使用POOL_BOUNDARY作为哨兵节点
+
+```objective-c
+struct AutoreleasePoolPageData
+{
+	magic_t const magic;   // 校验结构完整性
+	__unsafe_unretained id *next; //当前页下个空内存地址,初始化指向begin()
+	pthread_t const thread; 
+	AutoreleasePoolPage * const parent; //父节点
+	AutoreleasePoolPage *child; // 子节点
+	uint32_t const depth; //当前深度
+	uint32_t hiwat; // 最大入栈数
+
+	AutoreleasePoolPageData(__unsafe_unretained id* _next, pthread_t _thread, AutoreleasePoolPage* _parent, uint32_t _depth, uint32_t _hiwat)
+		: magic(), next(_next), thread(_thread),
+		  parent(_parent), child(nil),
+		  depth(_depth), hiwat(_hiwat)
+	{
+	}
+};
+```
+
+![17292cfbee012885](..\..\imgs\17292cfbee012885.jpg)
+
+当池中对象调用autorelease时会被add到page中，等当前释放池结束时调用pop则会通过出栈挨个弹出page中对应的对象并执行release计数器-1，直到遇到POOL_BOUNDARY则代表当前释放池中对象处理完毕
+
+Runloop和自动释放池
+
+进入Runloop时会进行push操作
+Runloop进入休眠前会调用pop和push操作
+Runloop退出时会调用pop
+
+## 性能优化
+
+### 卡顿优化
+
+1. 尽量使用轻量级对象，如不带事件的展示可以直接使用calayer
+2. 不要频繁修改UIView的相关属性，有需要一次调整
+3. autolayout比frame消耗cpu资源
+4. 图片size最好跟展示的大小一致，避免性能损耗
+5. 控制线程最大并发数
+6. 尽量把耗时操作放入子线程，如文本处理、图片处理
+7. 尽量避免出现离屏渲染
+8. 避免图片尺寸大于4096x4096
+
