@@ -74,3 +74,24 @@ upstream weightConfig {
  }
 ```
 
+## 文件路径
+
+> 开启文件目录 `autoindex on`
+
++ **root** root路径＋location路径
++ **alias** 用alias路径替换location路径, alias必须以'/'结尾
+
+```shell
+请求uri: /t/a.html
+
+location ^~ /t/ {
+     root /www/root/html/;
+}
+==> /www/root/html/t/a.html
+
+location ^~ /t/ {
+alias /www/root/html/new_t/;
+}
+==> /www/root/html/new_t/a.html
+```
+
