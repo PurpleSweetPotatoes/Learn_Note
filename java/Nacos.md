@@ -53,15 +53,16 @@
 
   ```shell
   docker run --name nacos -d \
-  -p 8848:8848 \
+  -p 38848:8848 \
+  --network mynet \
   --privileged=true \
   --restart=always \
   -e JVM_XMS=256m \
   -e JVM_XMX=256m \
   -e MODE=standalone \
   -e PREFER_HOST_MODE=hostname \
-  -v /home/nacos/logs:/home/nacos/logs \
-  -v /home/nacos/init.d/custom.properties:/home/nacos/init.d/custom.properties \
+  -v /home/nacos/logs:/root/nacos/logs \
+  -v /home/nacos/init.d/custom.properties:/root/nacos/init.d/custom.properties \
   nacos/nacos-server
   ```
 
