@@ -207,7 +207,7 @@ union {
 
 ### 消息发送流程
 
-![](http://blog-imgs.nos-eastchina1.126.net/1622385606.png)
+<img src="http://blog-imgs.nos-eastchina1.126.net/1622385606.png" style="zoom:100%;" />
 
 
 
@@ -221,7 +221,7 @@ union {
 
 **主要类**
 
-+ CFRunLoopRef (NSRunLoop是对CFRunLoopRef的包装)
++ CFRunLoopRef (NSRunLoop是)
 
 + CFRunLoopModeRef 代表当前runloop运行模式
 
