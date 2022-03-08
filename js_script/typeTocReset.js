@@ -1,4 +1,5 @@
 var content = document.getElementsByClassName("typora-export-content")[0];
+
 if (content != null) {
     content.style = "height: 100vh; display: flex";
 
