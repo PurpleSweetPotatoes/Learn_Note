@@ -1,4 +1,4 @@
-# Nginx学习记录
+# iNginx学习记录
 
 ## 什么是Nginx
 
@@ -93,5 +93,16 @@ location ^~ /t/ {
 alias /www/root/html/new_t/;
 }
 ==> /www/root/html/new_t/a.html
+```
+
+nginx配置示例
+
+```nginx
+# 需要修改首行 user权限，修改为 user root
+location /geekTime/ {
+  alias /root/geekTime/;
+  autoindex on;
+  charset utf-8,gbk;
+} 
 ```
 
